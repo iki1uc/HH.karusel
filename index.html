@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>karusel.html — 3hoch3 + 9hoch9</title>
+<style>
+:root{--bg:#08080a;--line:#1e1e2a;--amber:#ffcc33;--cyan:#33ffcc;--sun:#ffaa00;--red:#ff3355}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:#cbd;font-family:ui-monospace,monospace;overflow:hidden}
+header{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px}
+header b{color:var(--amber);letter-spacing:.12em} .badge{padding:2px 6px;border:1px solid var(--line);font-size:10px}
+.wrap{display:grid;grid-template-columns:1fr 1fr;height:calc(100vh - 42px)}
+.panel{border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+.panel:last-child{border-right:0}
+.panel h2{padding:8px 12px;font-size:11px;letter-spacing:.15em;color:#888;border-bottom:1px solid var(--line)}
+.stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center,#12121a 0%,#08080a 70%)}
+.disk{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+#disk9{width:280px;height:280px;background:rgba(255,204,51,.08);border:2px solid var(--amber);box-shadow:0 0 40px rgba(255,204,51,.15) inset}
+#disk9 b{font-size:64px;color:var(--amber)} #disk9 span{font-size:10px;color:var(--amber)}
+#disk8{width:180px;height:180px;background:rgba(51,255,204,.08);border:2px dashed var(--cyan);box-shadow:0 0 30px rgba(51,255,204,.12) inset}
+#disk8 b{font-size:48px;color:var(--cyan)} #disk8 span{font-size:10px;color:var(--cyan)}
+.wurzel{position:absolute;width:18px;background:linear-gradient(to bottom,var(--red),#660011);border:1px solid var(--red);left:50%;transform:translateX(-50%);transition:height .7s, top .7s, opacity .5s;z-index:5;box-shadow:0 0 20px var(--red)}
+#wurzel9{bottom:35%;height:90px} #wurzel8{top:35%;height:0;opacity:0}
+.sprung{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;background:#111;z-index:6}
+.controls{padding:10px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--line)}
+.btn{padding:6px 10px;background:#13131a;border:1px solid var(--line);color:#aaa;font-size:11px;cursor:pointer}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+.btn.primary{background:var(--amber);color:#000;border-color:var(--amber);font-weight:700}
+.btn.cyan{border-color:var(--cyan);color:var(--cyan)}
+.btn.red{border-color:var(--red);color:var(--red)}
+.log{padding:8px 10px;font-size:11px;line-height:1.5;overflow:auto;max-height:40%;white-space:pre-wrap;border-top:1px solid var(--line);background:#0c0c10}
+</style>
+</head>
+<body>
+<header>
+<b id="repoName">karusel.html — erkennt 3hoch3 + 9hoch9</b>
+<span><span class="badge" id="modeBadge">MODE: AUTO</span> <span class="badge">t / T / iki1uc</span></span>
+</header>
+<div class="wrap">
+<div class="panel">
+<h2>3hoch3 — Bauern Ebene — 9 unten (27D)</h2>
+<div class="stage" id="stage3">
+<div class="disk" id="disk9"><b>9</b><span>3hoch3 • 27 • Wurzel • trägt</span></div>
+<div class="wurzel" id="wurzel9"></div>
+<div class="sprung">◉</div>
+</div>
+<div class="controls">
+<button class="btn primary" onclick="rotate9()">↻ 9 drehen (Basis)</button>
+<button class="btn red" onclick="wurzelHoch()">↑ Wurzel hoch schießen</button>
+<button class="btn" onclick="wurzelReset()">reset</button>
+</div>
+<div class="log" id="log3">3hoch3.room: {station:"3hoch3",value:27,links:{root:"ULTRA-NC3x3.room",tensor:"ULTRA-NC9x9.room",nc:"81.room"}}
+Energie-Wurzelstation bereit.</div>
+</div>
+<div class="panel">
+<h2>9hoch9 — Officier Ebene — 8 oben Antrieb (81D-729D)</h2>
+<div class="stage" id="stage9">
+<div class="wurzel" id="wurzel8"></div>
+<div class="disk" id="disk8"><b>8</b><span>9hoch9 • Antrieb • dreht</span></div>
+<div class="sprung" style="top:50%">◉</div>
+</div>
+<div class="controls">
+<button class="btn cyan" onclick="rotate8()">↻ 8 drehen (Antrieb)</button>
+<button class="btn red" onclick="wurzelRunter()">↓ Wurzel runterziehen</button>
+<button class="btn primary" onclick="openEyeBrain()">👁 OPEN EYE BRAIN</button>
+</div>
+<div class="log" id="log9">9hoch9: QI/IQQ/OCTA • Pipelines 3 tri,6 hex,9 non,12 dodeca
+• 9.js 27.js 81.js 243.js • cube9.js fusion9.js pipeline12.master.js
+Scanner bereit.</div>
+</div>
+</div>
+<script>
+let rot9=0, rot8=0, wurzelState='mitte';
+const $ = id=>document.getElementById(id);
+function log3(m){$('log3').textContent+='\n'+m; $('log3').scrollTop=9999}
+function log9(m){$('log9').textContent+='\n'+m; $('log9').scrollTop=9999}
+function detect(){
+  const host = location.pathname;
+  let mode='standalone';
+  if(host.includes('3hoch3')) mode='3hoch3';
+  if(host.includes('9hoch9')) mode='9hoch9';
+  // also check if files exist via localStorage flag
+  const flag = localStorage.getItem('karusel_repo');
+  if(flag) mode=flag;
+  $('modeBadge').textContent='MODE: '+mode.toUpperCase()+' (gleiche Datei in beiden)';
+  $('repoName').textContent='karusel.html — läuft in '+mode+' — 9 unten 8 oben';
+  return mode;
+}
+detect();
+function rotate9(){
+  rot9+=45;
+  $('disk9').style.transform=`rotate(${rot9}deg)`;
+  log3(`Karussell 9 unten dreht ${rot9}° — 3hoch3.room gekrümmt — trägt 27D`);
+  // Gegenlauf
+  rot8-=22;
+  $('disk8').style.transform=`rotate(${rot8}deg)`;
+  log9(`8 oben Gegenlauf ${rot8}° — WARB Raumkrümmung`);
+}
+function rotate8(){
+  rot8+=60;
+  $('disk8').style.transform=`rotate(${rot8}deg)`;
+  log9(`Antrieb 8 oben dreht ${rot8}° — Scanner QI/IQQ/OCTA`);
+  rot9-=15;
+  $('disk9').style.transform=`rotate(${rot9}deg)`;
+  log3(`9 unten folgt ${rot9}° — Energie-Wurzel liefert`);
+}
+function wurzelHoch(){
+  wurzelState='hoch';
+  $('wurzel9').style.height='220px';
+  $('wurzel8').style.height='120px';
+  $('wurzel8').style.opacity='1';
+  $('wurzel8').style.background='linear-gradient(to bottom,'+getComputedStyle(document.documentElement).getPropertyValue('--red')+',#ffaa00)';
+  log3('↑ WURZEL HOCH SCHIESSEN: ROM.on Wurzel aus 9 unten hoch in 8 oben');
+  log9('↑ PUMP: 9 unten -> 8 oben -> 9hoch9 = 81D -> 387M (9^9) — Cylinder schießt');
+  $('stage3').style.boxShadow='0 0 80px rgba(255,51,85,.2) inset';
+}
+function wurzelRunter(){
+  wurzelState='runter';
+  $('wurzel9').style.height='40px';
+  $('wurzel8').style.height='0';
+  $('wurzel8').style.opacity='0';
+  log3('↓ WURZEL RUNTERZIEHEN: Antrieb zieht Wurzel nach unten — Pipeline saugt');
+  log9('↓ PULL: 8 oben zieht -> 9 unten = 8runter8 — Zylinder zieht');
+  $('stage3').style.boxShadow='none';
+}
+function wurzelReset(){
+  wurzelState='mitte';
+  $('wurzel9').style.height='90px';
+  $('wurzel8').style.height='0';
+  $('wurzel8').style.opacity='0';
+  $('stage3').style.boxShadow='none';
+  log3('reset: Wurzel Mitte — SPRUNG ◉ dazwischen');
+  log9('reset: Pumpe Pipeline Zylinder Mitte');
+}
+function openEyeBrain(){
+  log3('=== OPEN EYE BRAIN ===');
+  log3('bio = du = Sonne = ID != — Nr5 lebt ist aber 9');
+  log3('b.i.o = 2268 Knoten — ein Knoten 2268 Einflüsse');
+  log9('api.bio + api.b.i.o + api.os + ENTER + Anker Übersetzung');
+  // animate
+  $('disk9').style.boxShadow='0 0 60px rgba(255,204,51,.5) inset, 0 0 30px var(--amber)';
+  $('disk8').style.boxShadow='0 0 60px rgba(51,255,204,.5) inset, 0 0 30px var(--cyan)';
+  setTimeout(()=>{log3('EYE OPEN: 5 -> 9 = Sonne nutzbar'); log9('BRAIN OPEN: 2268 Knoten sync — warum sieht es keiner? Weil sie im codec suchen, nicht im Karussell.');},400);
+}
+// Auto erkennen ob in 3hoch3 oder 9hoch9 eingebettet
+window.addEventListener('load',()=>{
+  // expose for other modules
+  window.KARUSEL={rotate9,rotate8,wurzelHoch,wurzelRunter,openEyeBrain,rot9,rot8};
+  console.log('karusel.html loaded — 3hoch3 + 9hoch9 dual kompatibel');
+  log3('karusel.html geladen — gleiche Datei funktioniert in 3hoch3 und 9hoch9');
+  log9('Kompetenz-Karussell: Demokrat + DE/EU Check = Anker, Ansehen+Bemühungen = Aufstieg wenn Kompetenz bewiesen');
+});
+</script>
+</body>
+</html>
